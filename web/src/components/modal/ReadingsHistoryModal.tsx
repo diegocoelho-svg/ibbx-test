@@ -29,8 +29,6 @@ export function ReadingsHistoryModal({ onClose, assetId, isOpen }: Props) {
     }
   }, [])
 
-  console.log(readings)
-
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70">
       <div className="w-full max-w-4xl rounded-lg bg-zinc-900 p-6 shadow-lg">
@@ -87,7 +85,7 @@ export function ReadingsHistoryModal({ onClose, assetId, isOpen }: Props) {
                   </td>
                   <td className="px-4 py-3 text-center">
                     <span
-                      className={`rounded-full px-3 py-1 text-xs font-medium ${reading.status === "NORMAL" ? "bg-emerald-500/20 text-emerald-400" : "bg-orange-500/20 text-orange-400"}`}
+                      className={`rounded-full px-3 py-1 text-xs font-medium ${reading.status === "NORMAL" ? "bg-emerald-500/20 text-emerald-400" : "bg-red-500/15 text-red-400"}`}
                     >
                       {reading.status}
                     </span>
