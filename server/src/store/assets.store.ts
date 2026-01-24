@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { findLastSensorReadingById } from './sensor-reading.store'
+import { calculateStatus } from '../utils/calculate-status'
 
 type AssetStatus = 'NORMAL' | 'ALERT' | null
 
@@ -38,9 +39,8 @@ function updateAssetStatus(assetId: string) {
   const reading = findLastSensorReadingById(assetId)
   if (!reading) return
 
-  const status =
-    reading.temperature > 80 || reading.vibration > 15 ? 'ALERT' : 'NORMAL'
-
+  const status = calculateStatus(reading.temperature, reading.vibration)
+  // reading.temperature > 80 || reading.vibration > 15 ? 'ALERT' : 'NORMAL'
   asset.status = status
 
   return status

@@ -1,4 +1,5 @@
 import { randomUUID } from 'crypto'
+import { calculateStatus } from '../utils/calculate-status'
 
 export type SensorReading = {
   id: string
@@ -6,6 +7,7 @@ export type SensorReading = {
   temperature: number
   vibration: number
   createdAt: string
+  status: 'NORMAL' | 'ALERT'
 }
 
 const readings: SensorReading[] = []
@@ -14,10 +16,13 @@ function createSensorReading(
   assetId: string,
   temperature: number,
   vibration: number,
-) {
+): SensorReading {
+  const status = calculateStatus(temperature, vibration)
+
   const reading: SensorReading = {
     id: randomUUID(),
     assetId,
+    status,
     temperature,
     vibration,
     createdAt: new Date().toISOString(),

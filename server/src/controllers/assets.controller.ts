@@ -1,7 +1,13 @@
+/* eslint-disable prettier/prettier */
 import { z } from 'zod'
 import { FastifyReply, FastifyRequest } from 'fastify'
 import { HTTP_STATUS } from '../constants/httpStatus'
-import { createAsset, listAssets, findAssetById } from '../store/assets.store'
+import {
+  createAsset,
+  listAssets,
+  findAssetById,
+  updateAssetStatus,
+} from '../store/assets.store'
 import {
   findLastSensorReadingById,
   listSensorReadingsByAssetId,
@@ -31,7 +37,27 @@ class AssetsController {
 
   index(_request: FastifyRequest, reply: FastifyReply) {
     const assets = listAssets()
-    return reply.send(assets)
+
+    const assetsWithLastReading = assets.map((asset) => {
+      const lastReading = findLastSensorReadingById(asset.id)
+
+      if (lastReading) {
+        updateAssetStatus(asset.id)
+      }
+
+      return {
+        ...asset,
+        lastReading: lastReading
+          ? {
+            temperature: lastReading.temperature,
+            vibration: lastReading.vibration,
+            status: lastReading.status
+          }
+          : null,
+      }
+    })
+
+    return reply.send(assetsWithLastReading)
   }
 
   show(request: FastifyRequest, reply: FastifyReply) {
@@ -42,6 +68,7 @@ class AssetsController {
     const { id } = paramsSchema.parse(request.params)
 
     const asset = findAssetById(id)
+
 
     if (!asset) {
       return reply.status(HTTP_STATUS.NOT_FOUND).send({
